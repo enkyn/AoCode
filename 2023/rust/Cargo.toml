@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = [
+    "day01",
+    "runner-native"
+]
+
+[profile.release]
+lto = true
+opt-level = 3

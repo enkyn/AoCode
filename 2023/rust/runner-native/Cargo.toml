@@ -1,0 +1,9 @@
+[package]
+name = "runner-native"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies.wasmtime]
+version = "15.0"
+default-features = false
+features = [ "addr2line", "coredump", "cranelift", "parallel-compilation" ]

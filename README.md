@@ -7,8 +7,8 @@ The solutions are written intending to target `wasm32-unknown-unknown`. Two runn
 #### Building and Running
 The following assumes the current working directory to be `[year]/rust`.
 
-A script (`run.sh`) will be included that takes a `[day]` as input and runs:  
+A script (`run.sh`) will be included that takes a `[day]` (and optionally, `share`) as input and runs:  
 `cargo build --release --target=wasm32-unknown-unknown -p [day]`  
-`cargo run --release -p runner-native [day]`
+`cargo run --release -p runner-native [day] <share>`
 ### Inko
 ### Zig

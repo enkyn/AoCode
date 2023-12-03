@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>AoCode Wasm Runner</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    </head>
+    <body>
+        <h3>Wasm file, input file for part one, then input file for part two.</h3>
+        <form id="runner">
+            <input type="file" name="wasm">
+            <input type="file" name="input_one">
+            <input type="file" name="input_two">
+            <input type="submit" name="submit" value="Run">
+        </form>
+        <div id="output"></div>
+
+        <script type="module">
+            function handler(runner, buffer, part) {
+                let input_data = new Uint8Array(buffer);
+
+                // pass the input to the wasm module
+                let input_ptr = runner.wasm_alloc(input_data.byteLength);
+                let input_buf = new Uint8Array(runner.memory.buffer, input_ptr, input_data.byteLength);
+                input_buf.set(input_data);
+
+                // run the specified puzzle part
+                let result, elapsed;
+                let start_time = performance.now();
+                if (part == "one") {
+                    result = runner.wasm_part_one(input_ptr, input_buf.byteLength);
+                    
+                } else if (part == "two") {
+                    result = runner.wasm_part_two(input_ptr, input_buf.byteLength);
+                }
+                elapsed = performance.now() - start_time;
+
+                // extract the result pointer and length, then retrieve the result buffer
+                let result_ptr = Number(result >> 32n);
+                let result_len = Number(result & 0xffffffffn);
+                let result_buf = new Uint8Array(runner.memory.buffer, result_ptr, result_len);
+
+                // compose the answer from the result buffer
+                let answer = (result_buf[3] << 24) | (result_buf[2] << 16) | (result_buf[1] << 8) | result_buf[0];
+
+                // append the answer (and time taken) to the page
+                let answer_element = document.createElement("pre");
+                answer_element.innerText += "Part " + part + " result: " + answer + "\nTime: " + elapsed + "ms";
+                document.body.querySelector("#output").appendChild(answer_element);
+            }
+            
+            document.body.querySelector("#runner").addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                let wasm_file = event.target[0].files[0];
+                let input_file_one = event.target[1].files[0];
+                let input_file_two = event.target[2].files[0];
+                
+                let wasm_reader = new FileReader();
+                wasm_reader.addEventListener("load", (event) => {
+
+                    WebAssembly.instantiate(event.target.result, {})
+                        .then((result) => {
+                            let runner = result.instance.exports;
+
+                            let input_reader_one = new FileReader();
+                            let input_reader_two = new FileReader();
+
+                            input_reader_one.addEventListener("load", (event) => handler(runner, event.target.result, "one"));
+                            input_reader_two.addEventListener("load", (event) => handler(runner, event.target.result, "two"));
+
+                            input_reader_one.readAsArrayBuffer(input_file_one);
+                            input_reader_two.readAsArrayBuffer(input_file_two);
+
+                        });
+                });
+                wasm_reader.readAsArrayBuffer(wasm_file);
+            });
+        </script>
+    </body>
+</html>

@@ -3,6 +3,12 @@ name = "runner-native"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+x123 = { git = "https://github.com/enkyn/x123.git" }
+
+[build-dependencies]
+x123 = { git = "https://github.com/enkyn/x123.git" }
+
 [dependencies.wasmtime]
 version = "15.0"
 default-features = false

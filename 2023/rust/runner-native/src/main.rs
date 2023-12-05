@@ -7,6 +7,8 @@ type Ptr = u32;
 type Len = u32;
 type PtrLen = u64;
 
+const INPUT_KEY: &'static [u8] = include_bytes!("../../../common/input/inputs.key");
+
 fn main() -> wasmtime::Result<()> {
     let mut args = std::env::args().skip(1);
 
@@ -54,25 +56,26 @@ fn main() -> wasmtime::Result<()> {
     // Setup the day's input file path.
     let mut input_path = PathBuf::from(std::env::current_dir().unwrap());
     input_path.pop();
-    input_path.push("common/input");
+    input_path.push("common/crypt");
 
     // Determine path(s) for the input(s).
-    let input_path_one = input_path.join(format!("{day}-1.txt"));
+    let input_path_one = input_path.join(format!("{day}-1.x123"));
     let input_path_two = match args.next() {
         Some(flag) => {
             if &flag == "share" {
-                input_path.join(format!("{day}-1.txt"))
+                input_path.join(format!("{day}-1.x123"))
             } else {
                 eprintln!("invalid flag");
                 std::process::exit(3);
             }
         },
-        None => input_path.join(format!("{day}-2.txt"))
+        None => input_path.join(format!("{day}-2.x123"))
     };
 
     // Part one
-    if let Ok(input) = std::fs::read(input_path_one) {
+    if let Ok(mut input) = std::fs::read(&input_path_one) {
         let memory = instance.get_memory(&mut store, "memory").unwrap();
+        decrypt(&mut input, &input_path_one);
 
         // Store the input in the Wasm's memory.
         let input_ptr = allocate.call(&mut store, input.len() as u32)?;
@@ -91,8 +94,9 @@ fn main() -> wasmtime::Result<()> {
     }
 
     // Part two
-    if let Ok(input) = std::fs::read(input_path_two) {
+    if let Ok(mut input) = std::fs::read(&input_path_two) {
         let memory = instance.get_memory(&mut store, "memory").unwrap();
+        decrypt(&mut input, &input_path_two);
 
         // Store the input in the Wasm's memory.
         let input_ptr = allocate.call(&mut store, input.len() as u32)?;
@@ -111,4 +115,15 @@ fn main() -> wasmtime::Result<()> {
     }
 
     Ok(())
+}
+
+fn decrypt(bytes: &mut [u8], path: &PathBuf) {
+    let file_name = path.file_name().unwrap();
+    let (file_name, _) = file_name.to_str().unwrap().rsplit_once('.').unwrap();
+    
+    let nonce: &[u8; 24] = &bytes[0..24].try_into().unwrap();
+    let mac: &[u8; 32] = &bytes[24..56].try_into().unwrap();
+    x123::new(INPUT_KEY)
+        .decrypt_with_data(&mut bytes[56..], file_name.as_bytes(), nonce, mac)
+        .expect("failed to decrypt input file");
 }

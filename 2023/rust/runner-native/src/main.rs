@@ -88,9 +88,9 @@ fn main() -> wasmtime::Result<()> {
         let mut result_buf = vec![0; result_len];
         memory.read(&mut store, result_ptr, &mut result_buf)?;
 
-        println!("- one:\n  result: {}\n  elapsed: {}ms",
+        println!("- one:\n  result: {}\n  elapsed: {}μs",
             u32::from_le_bytes(result_buf[..result_len].try_into().unwrap()),
-            start_time.elapsed().as_millis());
+            start_time.elapsed().as_micros());
     }
 
     // Part two
@@ -109,9 +109,9 @@ fn main() -> wasmtime::Result<()> {
         let mut result_buf = vec![0; result_len];
         memory.read(&mut store, result_ptr, &mut result_buf)?;
 
-        println!("- two:\n  result: {}\n  elapsed: {}ms",
+        println!("- two:\n  result: {}\n  elapsed: {}μs",
             u32::from_le_bytes(result_buf[..result_len].try_into().unwrap()),
-            start_time.elapsed().as_millis());
+            start_time.elapsed().as_micros());
     }
 
     Ok(())

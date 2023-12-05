@@ -76,6 +76,10 @@ fn part_one(input_buf: &[u8]) -> Vec<u8> {
         .to_le_bytes().to_vec()
 }
 
+fn part_two(input_buf: &[u8]) -> Vec<u8> {
+    unimplemented!("part_two")
+}
+
 #[test]
 fn part_one_test() {
     let input_buf = br#"
@@ -116,11 +120,7 @@ humidity-to-location map:
     assert_eq!(35, u32::from_le_bytes(part_one(input_buf).try_into().unwrap()));
 }
 
-fn part_two(input_buf: &[u8]) -> Vec<u8> {
-    unimplemented!("part_two")
+#[test]
+fn part_two_test() {
+    unimplemented!("part_two_test")
 }
-
-// #[test]
-// fn part_two_test() {
-//     unimplemented!("part_two_test")
-// }

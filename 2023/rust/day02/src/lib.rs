@@ -85,6 +85,13 @@ fn part_one(input_buf: &[u8]) -> Vec<u8> {
         .to_le_bytes().to_vec()
 }
 
+fn part_two(input_buf: &[u8]) -> Vec<u8> {
+    let input_str = String::from_utf8_lossy(input_buf);
+
+    min_cubes(&input_str)
+        .to_le_bytes().to_vec()
+}
+
 #[test]
 fn part_one_test() {
     let input_str = r#"
@@ -96,13 +103,6 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
     "#;
     
     assert_eq!(8, valid_sum(&input_str, [12, 13, 14]));
-}
-
-fn part_two(input_buf: &[u8]) -> Vec<u8> {
-    let input_str = String::from_utf8_lossy(input_buf);
-
-    min_cubes(&input_str)
-        .to_le_bytes().to_vec()
 }
 
 #[test]

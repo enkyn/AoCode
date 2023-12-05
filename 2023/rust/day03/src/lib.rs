@@ -117,24 +117,6 @@ fn part_one(input_buf: &[u8]) -> Vec<u8> {
         .to_le_bytes().to_vec()
 }
 
-#[test]
-fn part_one_test() {
-    let input_str = br#"
-467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598.."#;
-
-    let sum = part_one(input_str);
-    assert_eq!(4361, u32::from_le_bytes(sum.try_into().unwrap()));
-}
-
 fn part_two(input_buf: &[u8]) -> Vec<u8> {
     let input_str = String::from_utf8_lossy(input_buf);
     let (chars, x_len) = parse_schematic(&input_str);
@@ -220,6 +202,24 @@ fn part_two(input_buf: &[u8]) -> Vec<u8> {
         })
         .sum::<u32>()
         .to_le_bytes().to_vec()
+}
+
+#[test]
+fn part_one_test() {
+    let input_str = br#"
+467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."#;
+
+    let sum = part_one(input_str);
+    assert_eq!(4361, u32::from_le_bytes(sum.try_into().unwrap()));
 }
 
 #[test]

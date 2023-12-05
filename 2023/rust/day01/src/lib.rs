@@ -42,18 +42,18 @@ fn part_one(input_buf: &[u8]) -> Vec<u8> {
     sum(&input_str, false).to_le_bytes().to_vec()
 }
 
+fn part_two(input_buf: &[u8]) -> Vec<u8> {
+    let input_str = String::from_utf8_lossy(input_buf);
+
+    sum(&input_str, true).to_le_bytes().to_vec()
+}
+
 #[test]
 fn part_one_test() {
     let input_str = "1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet";
     let sum = sum(input_str, false);
     
     assert_eq!(142, sum);
-}
-
-fn part_two(input_buf: &[u8]) -> Vec<u8> {
-    let input_str = String::from_utf8_lossy(input_buf);
-
-    sum(&input_str, true).to_le_bytes().to_vec()
 }
 
 #[test]

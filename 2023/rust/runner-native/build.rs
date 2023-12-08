@@ -14,16 +14,22 @@ fn main() {
             continue;
         }
 
+        // determine output directory for encrypted input
+        let name = format!("{file_name}.x123");
+        let mut outdir = file.path();
+        outdir.pop();
+        outdir.pop();
+
+        // check if an encrypted input file already exists
+        let path = outdir.join("crypt").join(name);
+        if path.exists() {
+            continue;
+        }
+
         if let Ok(mut bytes) = std::fs::read(file.path()) {
             // encrypt an input
             let (nonce, mac) = x123::new(INPUT_KEY)
                 .encrypt_with_data(&mut bytes, file_name.as_bytes(), None);
-
-            // determine output directory for encrypted input
-            let name = format!("{file_name}.x123");
-            let mut outdir = file.path();
-            outdir.pop();
-            outdir.pop();
 
             // prepend nonce and mac to encrypted bytes
             let mut output = nonce.to_vec();
@@ -31,7 +37,6 @@ fn main() {
             output.extend(bytes);
 
             // output the encrypted input
-            let path = outdir.join("crypt").join(name);
             std::fs::write(path, &output)
                 .expect("failed to write encrypted file");
             
